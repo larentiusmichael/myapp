@@ -2,6 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
@@ -10,34 +20,124 @@
       content="Web site created using create-react-app"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <style>
+      #container {
+        position: relative;
+      }
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
+      #chatbotContainer {
+        position: absolute;
+        z-index: 2;
+        height: 0vh; /* Initial height */
+        width: 0vh; /* Initial width */
+        overflow: hidden;
+        transition: height 0.3s ease;
+      }
+
+      #chatbotContainer.expanded {
+        bottom: 70px;
+        right: 20px;
+        height: 100vh;
+        width: 50vh;
+      }
+
+      #chatbotContainer.fullscreen {
+        bottom: 70px;
+        right: 0px;
+        height: 100vh; /* Full height */
+        width: 100%;
+      }
+
+      #chatbotContainer flowise-fullchatbot {
+        position: absolute; /* Position chatbot relative to its container */
+        width: 100%; /* Full width of container */
+        height: 100%; /* Full height of container */
+      }
+
+      #toggleChatButton {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2; /* Ensure it's above other content */
+      }
+
+      #root {
+        position: relative;
+        z-index: 1; /* Ensure it's below other content */
+      }
+    </style>
     <title>React App</title>
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  <body style="margin: 0">
+    <script type="module">
+      // import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js";
+      import Chatbot from "https://cdn.jsdelivr.net/gh/larentiusmichael/FlowiseChatEmbed@latest/dist/web.js";
+      Chatbot.initFull({
+        chatflowid: "91e9c803-5169-4db9-8207-3c0915d71c5f",
+        apiHost: "http://localhost:3000",
+        theme: {
+          button: {
+            backgroundColor: "#06b6d4",
+          },
+          chatWindow: {
+            showTitle: true,
+            title: "Chat with Iris",
+            welcomeMessage: "Hi there! How could I help you?",
+            backgroundColor: "#f7f8ff",
+            fontSize: 16,
+            poweredByTextColor: "#303235",
+            botMessage: {
+              backgroundColor: "#ffffff",
+              textColor: "#303235",
+              showAvatar: true,
+              avatarSrc: "https://cssp-resources.integrate.cx/IIILogo.png",
+            },
+            userMessage: {
+              backgroundColor: "#06b6d4",
+            },
+            textInput: {
+              sendButtonColor: "#06b6d4",
+            },
+          },
+        },
+      });
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+      const toggleChatButton = document.getElementById("toggleChatButton");
+      const chatbotContainer = document.getElementById("chatbotContainer");
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+      let state = 0; // Initial state
+
+      toggleChatButton.addEventListener("click", () => {
+        switch (state) {
+          case 0: // Closed, open the chatbot container
+            chatbotContainer.classList.add("expanded");
+            state = 1;
+            break;
+          case 1: // Opened, show full screen
+            chatbotContainer.classList.add("fullscreen");
+            state = 2;
+            break;
+          case 2: // Full screen, close the chatbot container
+            chatbotContainer.classList.remove("expanded", "fullscreen");
+            state = 0;
+            break;
+        }
+      });
+    </script>
+
+    <div id="container">
+      <div id="chatbotContainer">
+        <flowise-fullchatbot></flowise-fullchatbot>
+      </div>
+
+      <div id="root"></div>
+
+      <button id="toggleChatButton">Chatbot</button>
+    </div>
+
+    <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
+    <!-- <button id="toggleChatButton">Bubble</button> -->
+    <!-- <div id="root"></div> -->
   </body>
 </html>
